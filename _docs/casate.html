@@ -33,28 +33,27 @@ permalink: /docs/casate/
 <script>
 
   var APIURL = 'https://www.anapioficeandfire.com/api/houses';
+  var API_SEARCH_BASE_URL = "https://www.anapioficeandfire.com/api/houses?name="
 
   document.addEventListener("DOMContentLoaded", () => {
     getHouses();
   });
 
-
   function searchHouses() {
-
-      $.ajax({
-        type: "GET",
-        url: "https://www.anapioficeandfire.com/api/houses?name=" + $("#searchBox").val(),
-        dataType: "json",
-        encode: true,
-      }).done(function (data) {
-        $.each(data, function (key, val) {
-          $(".houses").html("");
-          var house = `{% include house.html name='${val.name}' words='${val.words}' %}`
-          $(".houses").append(house);
-        });
+    $.ajax({
+      type: "GET",
+      url: API_SEARCH_BASE_URL + $("#searchBox").val(),
+      dataType: "json",
+      encode: true,
+    }).done(function (data) {
+      $.each(data, function (key, val) {
+        $(".houses").html("");
+        var house = `{% include house.html name='${val.name}' words='${val.words}' %}`
+        $(".houses").append(house);
       });
+    });
 
-      event.preventDefault();
+    event.preventDefault();
   }
 
   function getHouses() {
