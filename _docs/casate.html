@@ -1,0 +1,83 @@
+---
+title: Casate
+permalink: /docs/casate/
+---
+<div class="row">
+  <form class="navbar-form navbar-left">
+    <div class="form-group has-feedback">
+      <input id="searchBox" name="search-box" type="text" class="form-control" placeholder="Search...">
+      <i class="fa fa-search form-control-feedback"></i>
+    </div>
+    <button class="btn btn-success" onclick="searchHouses()">
+      Cerca
+    </button>
+  </form>
+</div>
+
+
+<br>
+<div class="houses"></div>
+
+<hr>
+<ul class="pager">
+  <li class="next" onclick="getHouses()">
+    <a>
+      Carica altre <span aria-hidden="true">&rarr;</span>
+    </a>
+  </li>
+  </li>
+</ul>
+
+
+
+<script>
+
+  var APIURL = 'https://www.anapioficeandfire.com/api/houses';
+
+  document.addEventListener("DOMContentLoaded", () => {
+    getHouses();
+  });
+
+
+  function searchHouses() {
+
+      $.ajax({
+        type: "GET",
+        url: "https://www.anapioficeandfire.com/api/houses?name=" + $("#searchBox").val(),
+        dataType: "json",
+        encode: true,
+      }).done(function (data) {
+        $.each(data, function (key, val) {
+          $(".houses").html("");
+          var house = `{% include house.html name='${val.name}' words='${val.words}' %}`
+          $(".houses").append(house);
+        });
+      });
+
+      event.preventDefault();
+  }
+
+  function getHouses() {
+    $.ajax({
+      type: 'GET',
+      url: APIURL,
+      success: function (data, textStatus, request) {
+        $.each(data, function (key, val) {
+          var house = `{% include house.html name='${val.name}' words='${val.words}' %}`
+          $(".houses").append(house);
+        });
+        var nextAPIURL = request.getResponseHeader('link').split(',')[0].split(';')[0];
+        nextAPIURL = nextAPIURL.substring(1, nextAPIURL.length - 1);
+        APIURL = nextAPIURL;
+      },
+      error: function (request, textStatus, errorThrown) {
+        console.log(' error ')
+      }
+    });
+
+  }
+
+
+
+
+</script>
